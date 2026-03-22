@@ -1,0 +1,38 @@
+.topBar {
+  background-color: var(--primary-dark);
+  color: white;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  width: 100%;
+  display: block;
+}
+
+.topBarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.infoGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .topBarContainer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
