@@ -149,7 +149,7 @@
 .carouselWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -158,7 +158,8 @@
   gap: 1.25rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: 0.5rem;
+  /* top padding so card box-shadow / hover lift is not clipped */
+  padding: 6px 0 0.75rem;
   scrollbar-width: none;
 }
 
@@ -272,28 +273,38 @@
   transform: translateX(4px);
 }
 
-/* Dots */
-.carouselDots {
+/* Prev / Next nav */
+.carouselNav {
   display: flex;
-  gap: 0.5rem;
-  padding-left: 0.25rem;
+  gap: 0.6rem;
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
+.navBtn {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background-color: #cbd5e1;
-  border: none;
+  background: white;
+  border: 1.5px solid var(--border-color);
+  font-size: 1rem;
+  color: var(--text-header);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.dotActive {
-  background-color: var(--primary);
-  width: 24px;
-  border-radius: 9999px;
+.navBtn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: scale(1.08);
+}
+
+.navBtnDisabled {
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 /* Promo Banner */

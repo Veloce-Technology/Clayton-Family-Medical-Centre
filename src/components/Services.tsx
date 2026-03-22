@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { SERVICES_DATA } from "@/constants";
 import styles from "./Services.module.css";
 
-const SLIDE_INTERVAL = 3500;
-
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(0);
+  // No auto-selected card — only hovered card gets the active style
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  // The track page: scroll one card at a time
+  const [scrollPos, setScrollPos] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
 
   // Scroll-trigger animation
@@ -24,24 +25,25 @@ export default function Services() {
     return () => obs.disconnect();
   }, []);
 
-  // Auto-play carousel
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % SERVICES_DATA.length);
-    }, SLIDE_INTERVAL);
-    return () => clearInterval(timer);
-  }, []);
+  const CARD_WIDTH = 212; // card min-width + gap
 
-  // Scroll carousel track to active card
-  useEffect(() => {
+  const scrollTo = (dir: "prev" | "next") => {
     const track = trackRef.current;
     if (!track) return;
-    const card = track.children[activeIdx] as HTMLElement;
-    if (card) {
-      const offset = card.offsetLeft - track.offsetWidth / 2 + card.offsetWidth / 2;
-      track.scrollTo({ left: offset, behavior: "smooth" });
-    }
-  }, [activeIdx]);
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const newPos = dir === "next"
+      ? Math.min(scrollPos + CARD_WIDTH, maxScroll)
+      : Math.max(scrollPos - CARD_WIDTH, 0);
+    track.scrollTo({ left: newPos, behavior: "smooth" });
+    setScrollPos(newPos);
+  };
+
+  const canPrev = scrollPos > 0;
+  const canNext = (() => {
+    const track = trackRef.current;
+    if (!track) return true;
+    return scrollPos < track.scrollWidth - track.clientWidth - 4;
+  })();
 
   return (
     <section
@@ -78,8 +80,9 @@ export default function Services() {
               {SERVICES_DATA.map((service, index) => (
                 <div
                   key={service.id}
-                  className={`${styles.serviceCard} ${index === activeIdx ? styles.activeCard : ""}`}
-                  onClick={() => setActiveIdx(index)}
+                  className={`${styles.serviceCard} ${hoveredIdx === index ? styles.activeCard : ""}`}
+                  onMouseEnter={() => setHoveredIdx(index)}
+                  onMouseLeave={() => setHoveredIdx(null)}
                 >
                   <div className={styles.cardIconWrap}>
                     <span className={styles.cardIcon}>{service.icon}</span>
@@ -91,16 +94,24 @@ export default function Services() {
               ))}
             </div>
 
-            {/* Dots */}
-            <div className={styles.carouselDots}>
-              {SERVICES_DATA.map((_, i) => (
-                <button
-                  key={i}
-                  className={`${styles.dot} ${i === activeIdx ? styles.dotActive : ""}`}
-                  onClick={() => setActiveIdx(i)}
-                  aria-label={`Go to service ${i + 1}`}
-                />
-              ))}
+            {/* Prev / Next nav */}
+            <div className={styles.carouselNav}>
+              <button
+                className={`${styles.navBtn} ${!canPrev ? styles.navBtnDisabled : ""}`}
+                onClick={() => scrollTo("prev")}
+                aria-label="Previous"
+                disabled={!canPrev}
+              >
+                ←
+              </button>
+              <button
+                className={`${styles.navBtn} ${!canNext ? styles.navBtnDisabled : ""}`}
+                onClick={() => scrollTo("next")}
+                aria-label="Next"
+                disabled={!canNext}
+              >
+                →
+              </button>
             </div>
           </div>
 

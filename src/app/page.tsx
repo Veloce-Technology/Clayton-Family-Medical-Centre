@@ -4,6 +4,7 @@ import AboutUs from "@/components/AboutUs";
 import Services from "@/components/Services";
 import Doctors from "@/components/Doctors";
 import Banner from "@/components/Banner";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 
@@ -15,6 +16,7 @@ export default function Home() {
       <AboutUs />
       <Services />
       <Doctors />
+      <Contact />
       <Banner />
       <Footer />
       <BackToTop />

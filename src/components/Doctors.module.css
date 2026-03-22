@@ -1,7 +1,7 @@
 /* Doctors Section */
 .doctorsSection {
   background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
-  padding: 5rem 0 6rem;
+  padding: 5rem 0 0;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -10,17 +10,25 @@
 
 /* Scroll animation states */
 .doctorsSection .header,
-.doctorsSection .grid {
+.doctorsSection .infiniteTrackWrap,
+.doctorsSection .handleTrack {
   opacity: 0;
   transform: translateY(36px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.doctorsSection .grid { transition-delay: 0.15s; }
+.doctorsSection .infiniteTrackWrap {
+  transition-delay: 0.1s;
+}
+.doctorsSection .handleTrack {
+  transition-delay: 0.2s;
+}
 
 .visible .header,
-.visible .grid {
+.visible .infiniteTrackWrap,
+.visible .handleTrack {
   opacity: 1;
   transform: none;
 }
@@ -59,19 +67,32 @@
   line-height: 1.7;
 }
 
-/* Cards Grid */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+/* Infinite scroll track wrapper */
+.infiniteTrackWrap {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  cursor: grab;
+  user-select: none;
 }
 
-@media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+.dragging {
+  cursor: grabbing;
 }
 
-@media (min-width: 1100px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
+.infiniteTrack {
+  display: flex;
+  gap: 20px;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  /* no snap — controlled by JS */
+  padding: 0px 2rem 0px;
+  /* width: 100% instead of max-content to allow overflow content inside to be scrollable */
+  width: 100%;
+}
+
+.infiniteTrack::-webkit-scrollbar {
+  display: none;
 }
 
 /* Card */
@@ -82,23 +103,87 @@
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.35s ease;
-  opacity: 0;
-  transform: translateY(30px);
+  /* fixed width for carousel */
+  width: 340px;
+  flex-shrink: 0;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s ease;
 }
-
-.visible .doctorCard {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.35s ease;
-}
-
 .doctorCard:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.12);
+}
+
+/* Handle / Progress bar */
+.handleTrack {
+  width: 100%;
+  max-width: 400px;
+  height: 4px;
+  background: rgba(0, 162, 177, 0.1);
+  border-radius: 9999px;
+  margin: 1rem auto 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.handleThumb {
+  position: absolute;
+  top: 0;
+  width: 30%; /* Fixed width handle */
+  height: 100%;
+  background: var(--primary);
+  border-radius: 9999px;
+  transform: translateX(-50%); /* Center on the percentage point */
+  transition: left 0.1s linear;
+}
+
+/* Nav Buttons */
+.trackControl {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.navBtn {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  pointer-events: auto;
+}
+
+.navBtn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.navBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .trackControl {
+    display: none;
+  }
 }
 
 /* Photo area */
@@ -123,7 +208,11 @@
 .photoOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 55%, rgba(15, 23, 42, 0.7) 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 55%,
+    rgba(15, 23, 42, 0.7) 100%
+  );
 }
 
 .specialtyTag {
@@ -264,8 +353,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
@@ -281,8 +374,14 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modalClose {
@@ -315,7 +414,9 @@
 }
 
 @media (min-width: 680px) {
-  .modalInner { grid-template-columns: 280px 1fr; }
+  .modalInner {
+    grid-template-columns: 280px 1fr;
+  }
 }
 
 /* Modal Left */

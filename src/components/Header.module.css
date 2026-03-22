@@ -203,59 +203,169 @@
   color: var(--primary);
 }
 
+/* ===== Mobile Hamburger Button ===== */
 .mobileMenuButton {
-  display: block;
-  font-size: 1.5rem;
-  color: var(--primary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-@media (min-width: 1024px) {
-  .mobileMenuButton {
-    display: none;
-  }
-}
-
-/* Mobile Dropdown Nav */
-.mobileNav {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background-color: var(--surface-color);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  padding: 0;
   display: flex;
   flex-direction: column;
-  transform-origin: top;
-  transform: scaleY(0);
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  background: var(--primary);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  padding: 8px;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.hamburgerLine {
+  width: 100%;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+  transform-origin: center;
+}
+
+/* X state */
+.hamburgerOpen .hamburgerLine:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburgerOpen .hamburgerLine:nth-child(2) { opacity: 0; width: 0; }
+.hamburgerOpen .hamburgerLine:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobileMenuButton:hover { background: var(--primary-dark); }
+
+@media (min-width: 1024px) {
+  .mobileMenuButton { display: none; }
+}
+
+/* ===== Mobile Drawer ===== */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
   opacity: 0;
-  transition:
-    transform var(--transition-speed) ease,
-    opacity var(--transition-speed) ease;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.mobileNavOpen {
-  transform: scaleY(1);
+.drawerOverlayOpen {
   opacity: 1;
-  padding: 1rem 0;
+  pointer-events: auto;
 }
 
-.mobileNavLink {
-  padding: 1rem 2rem;
-  font-weight: 500;
-  color: var(--text-header);
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 85vw);
+  height: 100dvh;
+  background: white;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
 
-.mobileNavLink:hover {
-  color: var(--primary);
+.drawerLogo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
 }
 
-.activeMobileLink {
-  color: var(--primary);
-  font-weight: 700;
+.drawerClose {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-body);
+  transition: all 0.2s ease;
 }
+
+.drawerClose:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.drawerNavLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-header);
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.drawerNavLink:hover {
+  color: var(--primary);
+  background: rgba(0,162,177,0.04);
+  padding-left: 2rem;
+}
+
+.drawerNavLinkActive {
+  color: var(--primary);
+  background: rgba(0,162,177,0.06);
+}
+
+.drawerNavArrow {
+  font-size: 0.9rem;
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+.drawerFooter {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.drawerBookBtn {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--primary);
+  color: white;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.drawerBookBtn:hover { background: var(--primary-dark); }
